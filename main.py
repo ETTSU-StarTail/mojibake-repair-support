@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QPlainTextEdit, QComboBox
+    QLabel, QPlainTextEdit, QComboBox, QTableWidget, QTableWidgetItem, QPushButton
 )
 
 class MainWindow(QWidget):
@@ -15,6 +15,10 @@ class MainWindow(QWidget):
         # 入力欄セクション
         input_section = self._create_input_section()
         main_layout.addLayout(input_section)
+        
+        # 出力一覧セクション
+        output_section = self._create_output_section()
+        main_layout.addLayout(output_section)
         
         self.setLayout(main_layout)
     
@@ -45,6 +49,28 @@ class MainWindow(QWidget):
         codec_layout.addWidget(self.current_codec)
         codec_layout.addStretch()
         layout.addLayout(codec_layout)
+        
+        return layout
+    
+    def _create_output_section(self):
+        """出力一覧（テーブル）UIを生成"""
+        layout = QVBoxLayout()
+        
+        layout.addWidget(QLabel("復元候補（可能性のある文字コード）:"))
+        
+        # テーブルウィジェット
+        self.output_table = QTableWidget()
+        self.output_table.setColumnCount(2)
+        self.output_table.setHorizontalHeaderLabels(["文字コード", "復元結果"])
+        self.output_table.horizontalHeader().setStretchLastSection(True)
+        layout.addWidget(self.output_table)
+        
+        # 実行ボタン
+        button_layout = QHBoxLayout()
+        self.execute_btn = QPushButton("復元候補を生成")
+        button_layout.addWidget(self.execute_btn)
+        button_layout.addStretch()
+        layout.addLayout(button_layout)
         
         return layout
 
