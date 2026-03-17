@@ -1,7 +1,8 @@
 import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QPlainTextEdit, QComboBox, QTableWidget, QTableWidgetItem, QPushButton
+    QLabel, QPlainTextEdit, QComboBox, QTableWidget, QTableWidgetItem, 
+    QPushButton, QLineEdit
 )
 
 class MainWindow(QWidget):
@@ -19,6 +20,10 @@ class MainWindow(QWidget):
         # 出力一覧セクション
         output_section = self._create_output_section()
         main_layout.addLayout(output_section)
+        
+        # 任意文字コード追加セクション
+        custom_codec_section = self._create_custom_codec_section()
+        main_layout.addLayout(custom_codec_section)
         
         self.setLayout(main_layout)
     
@@ -71,6 +76,20 @@ class MainWindow(QWidget):
         button_layout.addWidget(self.execute_btn)
         button_layout.addStretch()
         layout.addLayout(button_layout)
+        
+        return layout
+    
+    def _create_custom_codec_section(self):
+        """任意文字コード追加UIを生成"""
+        layout = QHBoxLayout()
+        
+        layout.addWidget(QLabel("カスタム文字コード（追加するコード名）:"))
+        self.custom_codec_input = QLineEdit()
+        self.custom_codec_input.setPlaceholderText("例: utf-32, iso-8859-1")
+        layout.addWidget(self.custom_codec_input)
+        
+        self.add_codec_btn = QPushButton("追加")
+        layout.addWidget(self.add_codec_btn)
         
         return layout
 
