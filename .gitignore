@@ -30,7 +30,6 @@ MANIFEST
 # PyInstaller
 *.manifest
 *.spec
-!mojibake-repair.spec
 
 # Unit test / coverage reports
 htmlcov/
