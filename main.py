@@ -3,7 +3,7 @@ from functools import partial
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPlainTextEdit, QComboBox, QTableWidget, QTableWidgetItem,
-    QPushButton, QLineEdit
+    QPushButton, QLineEdit, QHeaderView
 )
 
 class MainWindow(QWidget):
@@ -74,7 +74,9 @@ class MainWindow(QWidget):
             self.output_table.setItem(row, 0, QTableWidgetItem(codec))
             self.output_table.setItem(row, 1, QTableWidgetItem(decoded_text))
 
-            copy_btn = QPushButton("コピー")
+            copy_btn = QPushButton("📋")
+            copy_btn.setToolTip("この復元結果をコピー")
+            copy_btn.setFixedWidth(40)
             copy_btn.clicked.connect(partial(self._copy_text_to_clipboard, decoded_text))
             self.output_table.setCellWidget(row, 2, copy_btn)
 
@@ -134,7 +136,10 @@ class MainWindow(QWidget):
         self.output_table = QTableWidget()
         self.output_table.setColumnCount(3)
         self.output_table.setHorizontalHeaderLabels(["文字コード", "復元結果", "操作"])
-        self.output_table.horizontalHeader().setStretchLastSection(True)
+        header = self.output_table.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         layout.addWidget(self.output_table)
 
         # 実行ボタン
