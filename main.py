@@ -1,4 +1,5 @@
 import sys
+from functools import partial
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPlainTextEdit, QComboBox, QTableWidget, QTableWidgetItem,
@@ -27,8 +28,16 @@ class MainWindow(QWidget):
 
         self.setLayout(main_layout)
 
+        # プラットフォーム別のデフォルト文字コード設定
+        self._set_default_codec_for_platform()
+
         # シグナル接続
         self._connect_signals()
+
+    def _set_default_codec_for_platform(self):
+        """OSに応じたデフォルト文字コードを設定"""
+        if sys.platform.startswith("win"):
+            self.current_codec.setCurrentText("Shift_JIS")
 
     def _connect_signals(self):
         """ボタンクリックなどのシグナルをスロットに接続"""
@@ -59,9 +68,19 @@ class MainWindow(QWidget):
 
         # テーブルに結果を表示
         self.output_table.setRowCount(len(results))
+        self.output_table.setColumnCount(3)
+        self.output_table.setHorizontalHeaderLabels(["文字コード", "復元結果", "操作"])
         for row, (codec, decoded_text) in enumerate(results):
             self.output_table.setItem(row, 0, QTableWidgetItem(codec))
             self.output_table.setItem(row, 1, QTableWidgetItem(decoded_text))
+
+            copy_btn = QPushButton("コピー")
+            copy_btn.clicked.connect(partial(self._copy_text_to_clipboard, decoded_text))
+            self.output_table.setCellWidget(row, 2, copy_btn)
+
+    def _copy_text_to_clipboard(self, text: str):
+        """指定文字列をクリップボードにコピー"""
+        QApplication.clipboard().setText(text)
 
     def _on_add_codec_clicked(self):
         """「追加」ボタンが押された時の処理（カスタム文字コード追加）"""
@@ -113,8 +132,8 @@ class MainWindow(QWidget):
 
         # テーブルウィジェット
         self.output_table = QTableWidget()
-        self.output_table.setColumnCount(2)
-        self.output_table.setHorizontalHeaderLabels(["文字コード", "復元結果"])
+        self.output_table.setColumnCount(3)
+        self.output_table.setHorizontalHeaderLabels(["文字コード", "復元結果", "操作"])
         self.output_table.horizontalHeader().setStretchLastSection(True)
         layout.addWidget(self.output_table)
 
