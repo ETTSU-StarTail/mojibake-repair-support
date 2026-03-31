@@ -42,7 +42,9 @@ class MainWindow(QWidget):
     def _connect_signals(self):
         """ボタンクリックなどのシグナルをスロットに接続"""
         self.execute_btn.clicked.connect(self._on_execute_clicked)
+        self.apply_result_btn.clicked.connect(self._on_apply_result_clicked)
         self.add_codec_btn.clicked.connect(self._on_add_codec_clicked)
+        self.output_table.cellDoubleClicked.connect(self._on_output_row_double_clicked)
 
     def _on_execute_clicked(self):
         """「復元候補を生成」ボタンが押された時の処理"""
@@ -83,6 +85,25 @@ class MainWindow(QWidget):
     def _copy_text_to_clipboard(self, text: str):
         """指定文字列をクリップボードにコピー"""
         QApplication.clipboard().setText(text)
+
+    def _apply_row_result_to_input(self, row: int):
+        """指定行の復元結果を入力欄へ反映"""
+        result_item = self.output_table.item(row, 1)
+        if result_item is None:
+            return
+
+        self.text_input.setPlainText(result_item.text())
+
+    def _on_apply_result_clicked(self):
+        """選択行の復元結果を入力欄へ反映"""
+        current_row = self.output_table.currentRow()
+        if current_row < 0:
+            return
+        self._apply_row_result_to_input(current_row)
+
+    def _on_output_row_double_clicked(self, row: int, _column: int):
+        """復元結果テーブル行のダブルクリックで入力欄へ反映"""
+        self._apply_row_result_to_input(row)
 
     def _on_add_codec_clicked(self):
         """「追加」ボタンが押された時の処理（カスタム文字コード追加）"""
@@ -146,6 +167,8 @@ class MainWindow(QWidget):
         button_layout = QHBoxLayout()
         self.execute_btn = QPushButton("復元候補を生成")
         button_layout.addWidget(self.execute_btn)
+        self.apply_result_btn = QPushButton("選択結果を入力へ反映")
+        button_layout.addWidget(self.apply_result_btn)
         button_layout.addStretch()
         layout.addLayout(button_layout)
 
