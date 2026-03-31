@@ -3,7 +3,7 @@ from functools import partial
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPlainTextEdit, QComboBox, QTableWidget, QTableWidgetItem,
-    QPushButton, QLineEdit, QHeaderView
+    QPushButton, QLineEdit, QHeaderView, QAbstractItemView
 )
 
 class MainWindow(QWidget):
@@ -157,6 +157,7 @@ class MainWindow(QWidget):
         self.output_table = QTableWidget()
         self.output_table.setColumnCount(3)
         self.output_table.setHorizontalHeaderLabels(["文字コード", "復元結果", "操作"])
+        self.output_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         header = self.output_table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
